@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perceptix — Structured Finance, Automated</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+  :root{
+    --ink:#0E1A2B;
+    --ink-soft:#1C2D45;
+    --parchment:#F5F2EA;
+    --paper:#FBF9F4;
+    --copper:#C08A3E;
+    --copper-soft:#E4C99A;
+    --slate:#5C6B7A;
+    --line:#D8D2C4;
+    --green-tranche:#3F6B52;
+    --serif:'Source Serif 4', Georgia, serif;
+    --sans:'Inter', -apple-system, sans-serif;
+    --mono:'JetBrains Mono', monospace;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:var(--sans);
+    color:var(--ink);
+    background:var(--parchment);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important;}
+  }
+
+  a{color:inherit;}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 32px;}
+
+  /* ===== NAV ===== */
+  header{
+    position:sticky;top:0;z-index:100;
+    background:rgba(245,242,234,0.92);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  nav.wrap{
+    display:flex;align-items:center;justify-content:space-between;
+    height:72px;
+  }
+  .logo{
+    font-family:var(--serif);
+    font-weight:700;
+    font-size:1.4rem;
+    letter-spacing:0.02em;
+    display:flex;align-items:baseline;gap:8px;
+  }
+  .logo .mark{
+    font-family:var(--mono);
+    font-size:0.7rem;
+    font-weight:600;
+    color:var(--copper);
+    border:1px solid var(--copper);
+    padding:2px 6px;
+    letter-spacing:0.08em;
+  }
+  .navlinks{display:flex;gap:36px;font-size:0.92rem;font-weight:500;}
+  .navlinks a{text-decoration:none;color:var(--ink-soft);position:relative;}
+  .navlinks a::after{
+    content:'';position:absolute;left:0;bottom:-6px;width:0;height:1px;
+    background:var(--copper);transition:width 0.25s ease;
+  }
+  .navlinks a:hover::after{width:100%;}
+  .nav-cta{
+    font-family:var(--mono);font-size:0.78rem;font-weight:600;
+    background:var(--ink);color:var(--paper);
+    padding:10px 18px;text-decoration:none;
+    letter-spacing:0.04em;
+    border:1px solid var(--ink);
+    transition:background 0.2s, color 0.2s;
+  }
+  .nav-cta:hover{background:transparent;color:var(--ink);}
+  .menu-toggle{display:none;}
+
+  /* ===== HERO ===== */
+  .hero{
+    padding:96px 0 80px;
+    border-bottom:1px solid var(--line);
+    position:relative;
+    overflow:hidden;
+  }
+  .hero-grid{
+    display:grid;grid-template-columns:1.1fr 0.9fr;gap:64px;align-items:center;
+  }
+  .eyebrow{
+    font-family:var(--mono);font-size:0.78rem;letter-spacing:0.18em;
+    text-transform:uppercase;color:var(--copper);margin-bottom:20px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .eyebrow::before{content:'';width:24px;height:1px;background:var(--copper);}
+  h1{
+    font-family:var(--serif);
+    font-size:clamp(2.4rem, 4.4vw, 3.6rem);
+    font-weight:600;
+    line-height:1.12;
+    letter-spacing:-0.01em;
+    margin-bottom:24px;
+  }
+  h1 em{
+    font-style:italic;color:var(--ink-soft);
+    border-bottom:2px solid var(--copper-soft);
+  }
+  .hero-sub{
+    font-size:1.08rem;color:var(--slate);max-width:46ch;margin-bottom:32px;
+  }
+  .hero-ctas{display:flex;gap:16px;flex-wrap:wrap;}
+  .btn{
+    font-family:var(--mono);font-size:0.82rem;font-weight:600;
+    padding:14px 24px;text-decoration:none;letter-spacing:0.03em;
+    transition:all 0.2s ease;border:1px solid var(--ink);
+  }
+  .btn-primary{background:var(--ink);color:var(--paper);}
+  .btn-primary:hover{background:var(--copper);border-color:var(--copper);}
+  .btn-secondary{background:transparent;color:var(--ink);}
+  .btn-secondary:hover{background:var(--ink);color:var(--paper);}
+
+  /* ===== WATERFALL DIAGRAM (signature element) ===== */
+  .waterfall{
+    background:var(--ink);
+    border:1px solid var(--ink);
+    padding:28px 28px 22px;
+    position:relative;
+    color:var(--paper);
+    font-family:var(--mono);
+  }
+  .waterfall-head{
+    display:flex;justify-content:space-between;align-items:center;
+    font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;
+    color:#8C9BAE;margin-bottom:18px;
+    border-bottom:1px solid var(--ink-soft);padding-bottom:12px;
+  }
+  .waterfall-head .dot{
+    width:8px;height:8px;border-radius:50%;background:var(--copper);
+    display:inline-block;margin-right:8px;
+    animation:pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{opacity:1;} 50%{opacity:0.35;}
+  }
+  .tranche-row{
+    display:flex;align-items:center;gap:14px;margin-bottom:14px;
+  }
+  .tranche-label{
+    width:88px;font-size:0.74rem;font-weight:600;letter-spacing:0.05em;
+    flex-shrink:0;
+  }
+  .tranche-bar-track{
+    flex:1;height:22px;background:var(--ink-soft);
+    position:relative;overflow:hidden;
+  }
+  .tranche-bar-fill{
+    height:100%;
+    width:0%;
+    transform-origin:left;
+    animation: fillbar 3.6s cubic-bezier(0.65,0,0.35,1) infinite;
+  }
+  .tranche-pct{width:46px;text-align:right;font-size:0.74rem;color:#A9B6C5;flex-shrink:0;}
+
+  .fill-senior{background:var(--copper); animation-name: fillSenior;}
+  .fill-mezz{background:#9C8255; animation-name: fillMezz;}
+  .fill-equity{background:var(--green-tranche); animation-name: fillEquity;}
+
+  @keyframes fillSenior{
+    0%,8%{width:0%;}
+    35%,100%{width:100%;}
+  }
+  @keyframes fillMezz{
+    0%,35%{width:0%;}
+    62%,100%{width:78%;}
+  }
+  @keyframes fillEquity{
+    0%,62%{width:0%;}
+    90%,100%{width:31%;}
+  }
+
+  .waterfall-foot{
+    margin-top:18px;padding-top:14px;border-top:1px solid var(--ink-soft);
+    font-size:0.72rem;color:#8C9BAE;display:flex;justify-content:space-between;
+  }
+  .waterfall-foot span:first-child{color:var(--copper-soft);}
+
+  /* ===== STAT STRIP ===== */
+  .stats{
+    border-bottom:1px solid var(--line);
+    background:var(--paper);
+  }
+  .stats .wrap{
+    display:grid;grid-template-columns:repeat(4,1fr);
+    gap:0;
+  }
+  .stat{
+    padding:36px 28px;
+    border-left:1px solid var(--line);
+  }
+  .stat:first-child{border-left:none;}
+  .stat-num{
+    font-family:var(--serif);font-size:2rem;font-weight:600;color:var(--ink);
+    display:block;margin-bottom:6px;
+  }
+  .stat-label{font-size:0.84rem;color:var(--slate);}
+
+  /* ===== SECTION SHARED ===== */
+  section{padding:96px 0;}
+  .section-head{margin-bottom:56px;max-width:62ch;}
+  .section-head .eyebrow{margin-bottom:14px;}
+  h2{
+    font-family:var(--serif);font-size:clamp(1.8rem,3vw,2.4rem);
+    font-weight:600;letter-spacing:-0.01em;margin-bottom:16px;
+  }
+  .section-head p{color:var(--slate);font-size:1.02rem;}
+
+  /* ===== PROBLEM ===== */
+  .problem{background:var(--ink);color:var(--paper);}
+  .problem .eyebrow{color:var(--copper-soft);}
+  .problem .eyebrow::before{background:var(--copper-soft);}
+  .problem .section-head p{color:#A9B6C5;}
+  .problem-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+    background:var(--ink-soft);
+    border:1px solid var(--ink-soft);
+  }
+  .problem-card{
+    background:var(--ink);padding:32px;
+  }
+  .problem-card .num{
+    font-family:var(--mono);font-size:0.78rem;color:var(--copper);
+    letter-spacing:0.1em;display:block;margin-bottom:16px;
+  }
+  .problem-card h3{
+    font-family:var(--serif);font-size:1.2rem;font-weight:600;margin-bottom:10px;
+  }
+  .problem-card p{font-size:0.92rem;color:#A9B6C5;}
+
+  /* ===== PRODUCT MODULES ===== */
+  .modules-grid{
+    display:grid;grid-template-columns:repeat(2,1fr);gap:1px;
+    background:var(--line);border:1px solid var(--line);
+  }
+  .module{
+    background:var(--paper);padding:36px;
+    transition:background 0.25s ease;
+  }
+  .module:hover{background:var(--parchment);}
+  .module-head{
+    display:flex;align-items:flex-start;justify-content:space-between;
+    margin-bottom:14px;gap:16px;
+  }
+  .module h3{
+    font-family:var(--serif);font-size:1.3rem;font-weight:600;
+  }
+  .module-tag{
+    font-family:var(--mono);font-size:0.68rem;letter-spacing:0.1em;
+    text-transform:uppercase;color:var(--copper);
+    border:1px solid var(--copper-soft);padding:4px 8px;
+    white-space:nowrap;flex-shrink:0;
+  }
+  .module p{color:var(--slate);font-size:0.94rem;}
+
+  /* ===== HOW IT WORKS / FLOW ===== */
+  .flow{background:var(--paper);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .flow-steps{
+    display:grid;grid-template-columns:repeat(4,1fr);
+    position:relative;
+  }
+  .flow-step{
+    padding:0 28px 0 0;position:relative;
+  }
+  .flow-step:not(:last-child)::after{
+    content:'→';
+    position:absolute;right:-2px;top:6px;
+    font-family:var(--mono);color:var(--copper-soft);font-size:1.2rem;
+  }
+  .flow-step .step-tag{
+    font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--copper-soft);
+    display:block;margin-bottom:14px;line-height:1;
+  }
+  .flow-step h4{
+    font-family:var(--serif);font-size:1.05rem;font-weight:600;margin-bottom:8px;
+  }
+  .flow-step p{font-size:0.88rem;color:var(--slate);}
+
+  @media (max-width:880px){
+    .flow-steps{grid-template-columns:1fr 1fr;gap:32px 0;}
+    .flow-step:nth-child(2)::after{display:none;}
+    .flow-step:nth-child(2),.flow-step:nth-child(4){padding-right:0;}
+  }
+
+  /* ===== FOUNDER ===== */
+  .founder{background:var(--ink);color:var(--paper);}
+  .founder .eyebrow{color:var(--copper-soft);}
+  .founder .eyebrow::before{background:var(--copper-soft);}
+  .founder-grid{
+    display:grid;grid-template-columns:280px 1fr;gap:64px;align-items:start;
+  }
+  .founder-card{
+    border:1px solid var(--ink-soft);
+    padding:32px;
+    background:var(--ink-soft);
+  }
+  .founder-photo{
+    width:100%;aspect-ratio:1;
+    background:linear-gradient(135deg, var(--copper) 0%, var(--ink-soft) 100%);
+    margin-bottom:20px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--serif);font-size:3.2rem;font-weight:700;color:var(--ink);
+  }
+  .founder-card h3{
+    font-family:var(--serif);font-size:1.3rem;font-weight:600;margin-bottom:4px;
+  }
+  .founder-card .role{
+    font-family:var(--mono);font-size:0.76rem;color:var(--copper-soft);
+    letter-spacing:0.06em;margin-bottom:18px;
+  }
+  .founder-links{display:flex;gap:14px;font-family:var(--mono);font-size:0.78rem;}
+  .founder-links a{text-decoration:none;color:#A9B6C5;border-bottom:1px solid transparent;transition:border-color 0.2s, color 0.2s;}
+  .founder-links a:hover{color:var(--copper-soft);border-color:var(--copper-soft);}
+
+  .founder-bio p{
+    color:#C7D0DA;font-size:1rem;margin-bottom:18px;max-width:60ch;
+  }
+  .founder-bio p:first-of-type{
+    font-family:var(--serif);font-size:1.2rem;color:var(--paper);font-style:italic;
+  }
+  .founder-marks{
+    display:flex;gap:36px;margin-top:32px;flex-wrap:wrap;
+    border-top:1px solid var(--ink-soft);padding-top:28px;
+  }
+  .founder-mark .label{
+    font-family:var(--mono);font-size:0.7rem;letter-spacing:0.1em;
+    text-transform:uppercase;color:var(--copper-soft);margin-bottom:6px;
+  }
+  .founder-mark .value{font-size:0.92rem;color:#C7D0DA;}
+
+  /* ===== CTA / WAITLIST ===== */
+  .cta-section{
+    text-align:center;padding:110px 0;
+  }
+  .cta-section h2{margin-bottom:18px;}
+  .cta-section p{color:var(--slate);max-width:50ch;margin:0 auto 36px;font-size:1.05rem;}
+  .cta-buttons{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;}
+
+  /* ===== FOOTER ===== */
+  footer{
+    border-top:1px solid var(--line);background:var(--paper);
+    padding:48px 0;
+  }
+  .footer-grid{
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:24px;
+  }
+  .footer-grid .logo{font-size:1.1rem;}
+  .footer-meta{font-family:var(--mono);font-size:0.76rem;color:var(--slate);text-align:right;}
+  .footer-meta a{text-decoration:none;color:var(--slate);border-bottom:1px solid var(--line);}
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width:920px){
+    .hero-grid{grid-template-columns:1fr;gap:48px;}
+    .stats .wrap{grid-template-columns:repeat(2,1fr);}
+    .stat:nth-child(3){border-left:none;}
+    .stat:nth-child(odd){border-left:none;}
+    .problem-grid{grid-template-columns:1fr;}
+    .modules-grid{grid-template-columns:1fr;}
+    .founder-grid{grid-template-columns:1fr;gap:32px;}
+    .founder-card{max-width:280px;}
+    .navlinks{display:none;}
+  }
+  @media (max-width:560px){
+    .wrap{padding:0 20px;}
+    .stats .wrap{grid-template-columns:1fr;}
+    .stat{border-left:none !important;border-top:1px solid var(--line);}
+    .stat:first-child{border-top:none;}
+    section{padding:64px 0;}
+    .hero{padding:56px 0 64px;}
+    .nav-cta{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <div class="logo">Perceptix <span class="mark">SF/OPS</span></div>
+    <div class="navlinks">
+      <a href="#problem">Problem</a>
+      <a href="#product">Product</a>
+      <a href="#workflow">Workflow</a>
+      <a href="#founder">Founder</a>
+    </div>
+    <a href="#waitlist" class="nav-cta">Request Access</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">Structured Finance Infrastructure</div>
+      <h1>The operating layer for <em>ABS &amp; MBS</em> deals — built for the data, not the spreadsheet.</h1>
+      <p class="hero-sub">
+        Perceptix automates deal documentation, models cash flow waterfalls across complex tranche structures,
+        generates investor reports, and monitors covenants across loan pools — replacing the patchwork of Excel
+        models and Word templates that underpins trillions in securitised debt.
+      </p>
+      <div class="hero-ctas">
+        <a href="#waitlist" class="btn btn-primary">Request a Walkthrough</a>
+        <a href="#product" class="btn btn-secondary">See the Modules</a>
+      </div>
+    </div>
+
+    <div class="waterfall" aria-label="Animated cash flow waterfall illustration">
+      <div class="waterfall-head">
+        <span><span class="dot"></span>WATERFALL.RUN — DEAL #SF-2026-014</span>
+        <span>PERIOD 07</span>
+      </div>
+
+      <div class="tranche-row">
+        <span class="tranche-label">CLASS A · SR</span>
+        <div class="tranche-bar-track"><div class="tranche-bar-fill fill-senior"></div></div>
+        <span class="tranche-pct">100%</span>
+      </div>
+      <div class="tranche-row">
+        <span class="tranche-label">CLASS B · MEZZ</span>
+        <div class="tranche-bar-track"><div class="tranche-bar-fill fill-mezz"></div></div>
+        <span class="tranche-pct">78%</span>
+      </div>
+      <div class="tranche-row">
+        <span class="tranche-label">CLASS E · EQUITY</span>
+        <div class="tranche-bar-track"><div class="tranche-bar-fill fill-equity"></div></div>
+        <span class="tranche-pct">31%</span>
+      </div>
+
+      <div class="waterfall-foot">
+        <span>Sequential pay · subordination intact</span>
+        <span>Recalculated in 0.4s</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats">
+  <div class="wrap">
+    <div class="stat">
+      <span class="stat-num">$3T+</span>
+      <span class="stat-label">in securitised debt structured annually with no native AI tooling layer</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">100s</span>
+      <span class="stat-label">of bespoke Excel waterfall models maintained per desk, deal-by-deal</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">~70%</span>
+      <span class="stat-label">of structuring &amp; reporting time spent on manual reconciliation, not analysis</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">1 Engine</span>
+      <span class="stat-label">for documentation, modelling, reporting and monitoring — across the deal lifecycle</span>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="problem" id="problem">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">The Status Quo</div>
+      <h2>Trillions are structured on tools that were never built for it.</h2>
+      <p>
+        Investment banks and asset managers run ABS and MBS operations on a stack of standalone Excel
+        workbooks and Word templates — passed deal-to-desk, edited by hand, and reconciled manually
+        every reporting period. Perceptix exists because the underlying instruments have grown far more
+        complex than the tools used to manage them.
+      </p>
+    </div>
+    <div class="problem-grid">
+      <div class="problem-card">
+        <span class="num">01 — DOCUMENTATION</span>
+        <h3>Deal docs, drafted by hand</h3>
+        <p>
+          Indentures, prospectuses, and servicing agreements are redrafted clause-by-clause for every
+          new issuance, with structural terms re-keyed across documents that should already agree with
+          each other.
+        </p>
+      </div>
+      <div class="problem-card">
+        <span class="num">02 — MODELLING</span>
+        <h3>Waterfalls live in fragile workbooks</h3>
+        <p>
+          Cash flow waterfall logic — priority of payments, triggers, subordination — is encoded in
+          spreadsheet formulas that are difficult to audit, easy to break, and slow to re-run under
+          stress scenarios.
+        </p>
+      </div>
+      <div class="problem-card">
+        <span class="num">03 — MONITORING</span>
+        <h3>Covenants checked, not watched</h3>
+        <p>
+          Pool-level covenant breaches and trigger events are typically caught at the next reporting
+          cycle — days or weeks after they occur — rather than the moment the underlying loan data
+          changes.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCT MODULES -->
+<section id="product">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">The Platform</div>
+      <h2>One system across the deal lifecycle.</h2>
+      <p>
+        Perceptix sits underneath the existing deal stack — ingesting term sheets, loan tapes, and
+        servicer reports — and produces the documents, models, and monitoring outputs that structuring
+        and surveillance teams currently build by hand.
+      </p>
+    </div>
+    <div class="modules-grid">
+      <div class="module">
+        <div class="module-head">
+          <h3>Deal Documentation Automation</h3>
+          <span class="module-tag">Drafting</span>
+        </div>
+        <p>
+          Generate indentures, prospectus supplements, and servicing agreements directly from a deal's
+          structural parameters — tranche sizes, coupon, subordination, triggers — keeping every document
+          in the deal package internally consistent as terms evolve.
+        </p>
+      </div>
+      <div class="module">
+        <div class="module-head">
+          <h3>Cash Flow Waterfall Modelling</h3>
+          <span class="module-tag">Modelling</span>
+        </div>
+        <p>
+          Configure priority-of-payment logic, interest and principal allocation rules, and trigger-driven
+          redirections once — then run the same waterfall against actual collections, stress scenarios,
+          and forward projections without rebuilding the model.
+        </p>
+      </div>
+      <div class="module">
+        <div class="module-head">
+          <h3>Investor Reporting Generation</h3>
+          <span class="module-tag">Reporting</span>
+        </div>
+        <p>
+          Produce periodic investor reports — tranche balances, distributions, pool performance metrics —
+          formatted to deal-specific templates, generated directly from the underlying waterfall run rather
+          than re-typed from it.
+        </p>
+      </div>
+      <div class="module">
+        <div class="module-head">
+          <h3>Covenant &amp; Trigger Monitoring</h3>
+          <span class="module-tag">Surveillance</span>
+        </div>
+        <p>
+          Continuously evaluate pool-level covenants — delinquency, default, and concentration tests —
+          against incoming loan-level data, flagging breaches and trigger events as they occur rather than
+          at the next reporting date.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WORKFLOW -->
+<section class="flow" id="workflow">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">How It Fits Together</div>
+      <h2>From loan tape to investor report — one pass.</h2>
+    </div>
+    <div class="flow-steps">
+      <div class="flow-step">
+        <span class="step-tag">In</span>
+        <h4>Ingest deal data</h4>
+        <p>Term sheets, loan tapes, and servicer files are read directly — no manual re-entry into spreadsheets.</p>
+      </div>
+      <div class="flow-step">
+        <span class="step-tag">Build</span>
+        <h4>Configure the structure</h4>
+        <p>Tranche structure, waterfall logic, and covenants are defined once as the deal's structural model.</p>
+      </div>
+      <div class="flow-step">
+        <span class="step-tag">Run</span>
+        <h4>Model &amp; monitor</h4>
+        <p>Waterfalls are recalculated each period; covenant tests run continuously against live pool data.</p>
+      </div>
+      <div class="flow-step">
+        <span class="step-tag">Out</span>
+        <h4>Generate outputs</h4>
+        <p>Investor reports, distribution statements, and updated deal documents are produced automatically.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOUNDER -->
+<section class="founder" id="founder">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Founder</div>
+      <h2>Built by someone who has sat inside the spreadsheets.</h2>
+    </div>
+    <div class="founder-grid">
+      <div class="founder-card">
+        <div class="founder-photo">AV</div>
+        <h3>Apoorav Vyas</h3>
+        <div class="role">Founder &amp; CEO, Perceptix</div>
+        <div class="founder-links">
+          <a href="#">LinkedIn</a>
+          <a href="#">Email</a>
+        </div>
+      </div>
+      <div class="founder-bio">
+        <p>
+          "Every structuring desk I've spoken with runs on the same stack — a master Excel waterfall,
+          a Word template for the prospectus, and a person whose job is making sure the two agree.
+          Perceptix replaces that person's worst hours, not their judgment."
+        </p>
+        <p>
+          Apoorav founded Perceptix after observing how little had changed in structured finance
+          operations despite the scale and complexity of the ABS and MBS market. The instruments —
+          tranching, subordination, triggers, covenants — have become significantly more intricate,
+          while the tools used to document, model, and monitor them have largely stayed the same:
+          general-purpose spreadsheets and word processors stretched far beyond their original purpose.
+        </p>
+        <p>
+          Perceptix is built around a simple premise: the structural terms of a deal — its tranches,
+          its waterfall, its covenants — should be defined once, as data, and every document, model,
+          and report that depends on those terms should be generated from that single source rather
+          than maintained separately by hand.
+        </p>
+        <div class="founder-marks">
+          <div class="founder-mark">
+            <div class="label">Focus</div>
+            <div class="value">ABS &amp; MBS deal operations</div>
+          </div>
+          <div class="founder-mark">
+            <div class="label">Approach</div>
+            <div class="value">Structure-as-data, documents as output</div>
+          </div>
+          <div class="founder-mark">
+            <div class="label">Stage</div>
+            <div class="value">Building with early design partners</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="waitlist">
+  <div class="wrap">
+    <div class="eyebrow" style="justify-content:center;">Get In Touch</div>
+    <h2>Bring your next deal's documentation onto Perceptix.</h2>
+    <p>
+      We're working closely with a small group of structuring and surveillance teams as design partners.
+      If your desk is still reconciling waterfalls by hand, we'd like to talk.
+    </p>
+    <div class="cta-buttons">
+      <a href="mailto:apoorav@perceptix.com" class="btn btn-primary">Email the Founder</a>
+      <a href="#product" class="btn btn-secondary">Review the Modules</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-grid">
+    <div class="logo">Perceptix <span class="mark">SF/OPS</span></div>
+    <div class="footer-meta">
+      Structured Finance Operations Software · Documentation · Modelling · Reporting · Monitoring<br>
+      © 2026 Perceptix. Founded by <a href="#founder">Apoorav Vyas</a>.
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
